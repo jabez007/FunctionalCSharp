@@ -11,7 +11,7 @@
     <iconUrl>https://raw.githubusercontent.com/jabez007/FunctionalCSharp/master/icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <!--releaseNotes>Summary of changes made in this release of the package.</releaseNotes-->
+    <releaseNotes>Added XML extensions for serializing and deserializing</releaseNotes>
     <copyright>Copyright 2018</copyright>
     <tags>Functional Lambda</tags>
   </metadata>
