@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalCSharp", "FunctionalCSharp\FunctionalCSharp.csproj", "{506B22D9-ED63-4982-9483-C25F756681B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TesterApp", "TesterApp\TesterApp.csproj", "{6B8819F0-2709-42BA-833F-2A1D87AE5635}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BB3498AC-2C6A-440D-8F43-BBCB22E9D4ED}"
+	ProjectSection(SolutionItems) = preProject
+		icon.png = icon.png
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{506B22D9-ED63-4982-9483-C25F756681B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{506B22D9-ED63-4982-9483-C25F756681B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{506B22D9-ED63-4982-9483-C25F756681B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{506B22D9-ED63-4982-9483-C25F756681B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B8819F0-2709-42BA-833F-2A1D87AE5635}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B8819F0-2709-42BA-833F-2A1D87AE5635}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B8819F0-2709-42BA-833F-2A1D87AE5635}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B8819F0-2709-42BA-833F-2A1D87AE5635}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4C065A10-325D-4E0E-A846-1710282239DE}
+	EndGlobalSection
+EndGlobal
