@@ -6,10 +6,7 @@ namespace FunctionalCSharp
     {
         public static string GetMessageStack(this Exception @this, string message = "") =>
             message
-                .When(
-                    m => m.IsNotNullOrEmpty(),
-                    m => string.Format("{0}{1}", m, Environment.NewLine)
-                )
+                .WhenNotNullOrEmpty(m => string.Format("{0}{1}", m, Environment.NewLine))
                 .Append(@this._GetMessageStack())
                 .TrimEnd();
 

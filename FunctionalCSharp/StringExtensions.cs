@@ -1,4 +1,6 @@
-﻿namespace FunctionalCSharp
+﻿using System;
+
+namespace FunctionalCSharp
 {
     public static class StringExtensions
     {
@@ -39,5 +41,17 @@
         /// <returns></returns>
         public static bool IsNotNullOrEmpty(this string @this) =>
             !string.IsNullOrEmpty(@this) && !string.IsNullOrWhiteSpace(@this);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="this"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public static string WhenNotNullOrEmpty(this string @this, Func<string, string> func) =>
+            @this.When(
+                str => str.IsNotNullOrEmpty(),
+                func
+            );
     }
 }
