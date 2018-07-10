@@ -86,7 +86,7 @@ namespace FunctionalCSharp
         /// <param name="tryFunction"></param>
         /// <param name="errorMessage"></param>
         /// <returns></returns>
-        public static Result<TResult> Try<T, TResult, TException>(this T @this, Func<T, Result<TResult>> tryFunction, string errorMessage)
+        public static Result<TResult> Try<T, TResult, TException>(this T @this, Func<T, Result<TResult>> tryFunction, string errorMessage = "")
             where TException : Exception
         {
             try
@@ -133,7 +133,7 @@ namespace FunctionalCSharp
         /// <param name="tryFunction"></param>
         /// <param name="errorMessage"></param>
         /// <returns></returns>
-        public static async Task<Result> TryAsync<T, TException>(this T @this, Func<T, Task<Result>> tryFunction, string errorMessage)
+        public static async Task<Result> TryAsync<T, TException>(this T @this, Func<T, Task<Result>> tryFunction, string errorMessage = "")
             where TException : Exception
         {
             try
@@ -203,7 +203,7 @@ namespace FunctionalCSharp
         /// <param name="errorMessage"></param>
         /// <returns></returns>
         public static async Task<Result<TResult>> TryAsync<T, TResult, TException>(this T @this, 
-            Func<T, Task<Result<TResult>>> tryFunction, string errorMessage)
+            Func<T, Task<Result<TResult>>> tryFunction, string errorMessage = "")
             where TException : Exception
         {
             try
