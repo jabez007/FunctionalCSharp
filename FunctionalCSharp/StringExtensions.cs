@@ -1,9 +1,31 @@
 ﻿using System;
+using System.Linq;
+using System.Security;
 
 namespace FunctionalCSharp
 {
     public static class StringExtensions
     {
+        /// <summary>
+        /// Converts the extended string object into a readonly SecureString. 
+        /// It is left up to you to properly dispose of the original string, if it contained sensitive data.
+        /// </summary>
+        /// <example>
+        /// var password = "P@$$w0rd";
+        /// var mySecure = password
+        ///     .ToSecureString()
+        ///     .Tee(securePassword => password = null)
+        /// </example>
+        /// <param name="this"></param>
+        /// <returns></returns>
+        public static SecureString ToSecureString(this string @this) =>
+            @this
+                .Aggregate(
+                    new SecureString(),
+                    (secureString, @char) => { secureString.AppendChar(@char); return secureString; },
+                    secureString => { secureString.MakeReadOnly(); return secureString; }
+                );
+
         /// <summary>
         /// Appends the given string to the extended string object
         /// </summary>
