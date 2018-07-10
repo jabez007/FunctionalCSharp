@@ -5,6 +5,9 @@ using System.Xml.Serialization;
 
 namespace FunctionalCSharp
 {
+    /// <summary>
+    /// Extension methods to functionalize serializing an object to and from XML
+    /// </summary>
     public static class XmlExtensions
     {
         /// <summary>

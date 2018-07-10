@@ -4,6 +4,9 @@ using System.Security;
 
 namespace FunctionalCSharp
 {
+    /// <summary>
+    /// Extension methods for string objects
+    /// </summary>
     public static class StringExtensions
     {
         /// <summary>
@@ -36,6 +39,16 @@ namespace FunctionalCSharp
             @this + toAppend;
 
         /// <summary>
+        /// Performs string.Format using the extended string object as the format 
+        /// and the given objects as the params for the format
+        /// </summary>
+        /// <param name="this"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static string Format(this string @this, params object[] args) =>
+            string.Format(@this, args);
+
+        /// <summary>
         /// Creates a string using the given format and args using string.Format 
         /// then appends that created string to the extended string object
         /// </summary>
@@ -45,16 +58,6 @@ namespace FunctionalCSharp
         /// <returns></returns>
         public static string AppendFormat(this string @this, string format, params object[] args) =>
             @this + format.Format(args);
-
-        /// <summary>
-        /// Performs string.Format using the extended string object as the format 
-        /// and the given objects as the params for the format
-        /// </summary>
-        /// <param name="this"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public static string Format(this string @this, params object[] args) =>
-            string.Format(@this, args);
 
         /// <summary>
         /// Checks if the extended string object is null, empty, or white space

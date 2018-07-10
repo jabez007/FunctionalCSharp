@@ -8,10 +8,26 @@ namespace FunctionalCSharp
     /// </summary>
     public class Result
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsSuccess { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public string ErrorMessage { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public bool IsFailure => !IsSuccess;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="isSuccess"></param>
+        /// <param name="errorMessage"></param>
         protected Result(bool isSuccess, string errorMessage = "")
         {
             if (isSuccess && !string.IsNullOrEmpty(errorMessage))
@@ -77,7 +93,7 @@ namespace FunctionalCSharp
         }
 
         /// <summary>
-        /// 
+        /// Executes the given function if this is a successful Result
         /// </summary>
         /// <param name="ifSuccess"></param>
         /// <returns></returns>
@@ -85,7 +101,7 @@ namespace FunctionalCSharp
             IsSuccess ? ifSuccess() : Failure(ErrorMessage);
 
         /// <summary>
-        /// 
+        /// Executes the given async function if this is a successful Result
         /// </summary>
         /// <param name="ifSuccess"></param>
         /// <returns></returns>
@@ -100,8 +116,17 @@ namespace FunctionalCSharp
     /// <typeparam name="T">The class of the return value for your operation</typeparam>
     public class Result<T> : Result
     {
+        /// <summary>
+        /// The returned object of a successful function
+        /// </summary>
         public T Value { get; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="isSuccess"></param>
+        /// <param name="errorMessage"></param>
         protected Result(T value, bool isSuccess, string errorMessage = "")
             : base(isSuccess, errorMessage)
         {
@@ -180,8 +205,11 @@ namespace FunctionalCSharp
         }
 
         /// <summary>
-        /// 
+        /// Executes the given function on the returned Value of this Result if this is a successful Result
         /// </summary>
+        /// <example>
+        /// 
+        /// </example>
         /// <param name="ifSuccess"></param>
         /// <returns></returns>
         public Result Bind(Func<T, Result> ifSuccess) =>
@@ -191,7 +219,7 @@ namespace FunctionalCSharp
         /// Executes the given function on the returned Value of this Result if this is a successful Result
         /// </summary>
         /// <example>
-        /// Result<string>.Success("hello").Bind(str => Result<string>.Success(str + " world"));
+        /// Result&lt;string&gt;.Success("hello").Bind(str => Result&lt;string&gt;.Success(str + " world"));
         /// </example>
         /// <param name="ifSuccess">Function to execute on the successful Result</param>
         /// <returns>If this Result was successful, the Result of the given function. Otherwise, this Result</returns>
@@ -199,8 +227,11 @@ namespace FunctionalCSharp
             IsSuccess ? ifSuccess(Value) : Result<TResult>.Failure(ErrorMessage);
 
         /// <summary>
-        /// 
+        /// Executes the given async function on the returned Value of this Result if this is a successful Result
         /// </summary>
+        /// <example>
+        /// 
+        /// </example>
         /// <param name="ifSuccess"></param>
         /// <returns></returns>
         public Task<Result> BindAsync(Func<T, Task<Result>> ifSuccess) =>

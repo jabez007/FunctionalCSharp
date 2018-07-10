@@ -2,6 +2,9 @@
 
 namespace FunctionalCSharp
 {
+    /// <summary>
+    /// Extension methods to functionalize checking if an object is null or default
+    /// </summary>
     public static class ValidationExtensions
     {
         /// <summary>
@@ -11,7 +14,7 @@ namespace FunctionalCSharp
         /// 
         /// </example>
         /// <typeparam name="T"></typeparam>
-        /// <param name="value"></param>
+        /// <param name="this"></param>
         /// <returns></returns>
         public static Result<T> IsNotNull<T>(this T @this) => 
             @this != null ? Result<T>.Success(@this) : 
@@ -24,7 +27,7 @@ namespace FunctionalCSharp
         /// 
         /// </example>
         /// <typeparam name="T"></typeparam>
-        /// <param name="value"></param>
+        /// <param name="this"></param>
         /// <param name="failureMessage"></param>
         /// <returns></returns>
         public static Result<T> IsNotNull<T>(this T @this, string failureMessage) =>
@@ -118,6 +121,9 @@ namespace FunctionalCSharp
         /// <summary>
         /// Executes the given function on the extended object when that object is not its type default
         /// </summary>
+        /// <example>
+        /// 
+        /// </example>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="this"></param>

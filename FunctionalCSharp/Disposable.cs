@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 
 namespace FunctionalCSharp
 {
+    /// <summary>
+    /// Static methods for functionalizing the 'using' block
+    /// </summary>
     public static class Disposable
     {
         /// <summary>

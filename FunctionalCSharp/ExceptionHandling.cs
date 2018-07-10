@@ -3,8 +3,18 @@ using System.Threading.Tasks;
 
 namespace FunctionalCSharp
 {
+    /// <summary>
+    /// Extension methods for exceptions and functionalizing the 'try-catch' block
+    /// </summary>
     public static class ExceptionHandling
     {
+        /// <summary>
+        /// Gathers the exception type, message, and stack trace for the extended exception 
+        /// and all inner exceptions recursively.
+        /// </summary>
+        /// <param name="this"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public static string GetMessageStack(this Exception @this, string message = "") =>
             message
                 .WhenNotNullOrEmpty(m => string.Format("{0}{1}", m, Environment.NewLine))
@@ -29,6 +39,7 @@ namespace FunctionalCSharp
         /// <typeparam name="TException"></typeparam>
         /// <param name="this"></param>
         /// <param name="tryFunction"></param>
+        /// <param name="errorMessage"></param>
         /// <returns></returns>
         public static Result Try<T, TException>(this T @this, Func<T, Result> tryFunction, string errorMessage = "")
             where TException : Exception
@@ -73,6 +84,7 @@ namespace FunctionalCSharp
         /// <typeparam name="TException"></typeparam>
         /// <param name="this"></param>
         /// <param name="tryFunction"></param>
+        /// <param name="errorMessage"></param>
         /// <returns></returns>
         public static Result<TResult> Try<T, TResult, TException>(this T @this, Func<T, Result<TResult>> tryFunction, string errorMessage)
             where TException : Exception
@@ -119,6 +131,7 @@ namespace FunctionalCSharp
         /// <typeparam name="TException"></typeparam>
         /// <param name="this"></param>
         /// <param name="tryFunction"></param>
+        /// <param name="errorMessage"></param>
         /// <returns></returns>
         public static async Task<Result> TryAsync<T, TException>(this T @this, Func<T, Task<Result>> tryFunction, string errorMessage)
             where TException : Exception
@@ -187,6 +200,7 @@ namespace FunctionalCSharp
         /// <typeparam name="TException"></typeparam>
         /// <param name="this"></param>
         /// <param name="tryFunction"></param>
+        /// <param name="errorMessage"></param>
         /// <returns></returns>
         public static async Task<Result<TResult>> TryAsync<T, TResult, TException>(this T @this, 
             Func<T, Task<Result<TResult>>> tryFunction, string errorMessage)

@@ -2,6 +2,9 @@
 
 namespace FunctionalCSharp
 {
+    /// <summary>
+    /// Static and extension methods to functionalize the 'switch' block
+    /// </summary>
     public static class Switch
     {
         /// <summary>
@@ -30,7 +33,7 @@ namespace FunctionalCSharp
     /// </summary>
     /// <example>
     /// var message =  Switch
-    ///     .On<string, string>("world")
+    ///     .On&lt;string, string&gt;("world")
     ///         .Case(
     ///             @this => @this.StartsWith("world"),
     ///             @this => "hello " + @this

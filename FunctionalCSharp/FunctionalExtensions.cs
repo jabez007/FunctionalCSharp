@@ -2,6 +2,9 @@
 
 namespace FunctionalCSharp
 {
+    /// <summary>
+    /// Extension methods to provide some generic functionality
+    /// </summary>
     public static class FunctionalExtensions
     {
         /// <summary>
