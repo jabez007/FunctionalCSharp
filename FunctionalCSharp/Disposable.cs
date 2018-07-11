@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace FunctionalCSharp
 {
     /// <summary>
-    /// Static methods for functionalizing the 'using' block
+    /// Static and extension methods for functionalizing the 'using' block
     /// </summary>
     public static class Disposable
     {
@@ -34,6 +34,55 @@ namespace FunctionalCSharp
                 return function(disposable);
         }
 
+        /// <summary>
+        /// Uses the extended object as input for the function to create an instance of the disposable 
+        /// then executes the given function on the disposable instance
+        /// </summary>
+        /// <typeparam name="TDisposableOptions"></typeparam>
+        /// <typeparam name="TDisposable">A class the implements the IDisposable interface</typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="disposableCreate">A function or method that will return an instance of your disposable type</param>
+        /// <param name="function">A function or method to interact with your disposable instance and return a result</param>
+        /// <returns></returns>
+        public static TResult Using<TDisposableOptions, TDisposable, TResult>(this TDisposableOptions @this,
+            Func<TDisposableOptions, TDisposable> disposableCreate, Func<TDisposable, TResult> function)
+                where TDisposable : IDisposable
+        {
+            using (var disposable = disposableCreate(@this))
+                return function(disposable);
+        }
+
+        /// <summary>
+        /// Functionalizes the 'using' statement block
+        /// </summary>
+        /// <typeparam name="TDisposable">A class the implements the IDisposable interface</typeparam>
+        /// <param name="disposableCreate">A function or method that will return an instance of your disposable type</param>
+        /// <param name="action">An action or method to interact with your disposable instance</param>
+        public static void Using<TDisposable>(Func<TDisposable> disposableCreate, Action<TDisposable> action)
+            where TDisposable : IDisposable
+        {
+            using (var disposable = disposableCreate())
+                action(disposable);
+        }
+
+        /// <summary>
+        /// Uses the extended object as input for the function to create an instance of the disposable 
+        /// then executes the given action on the disposable instance
+        /// </summary>
+        /// <typeparam name="TDisposableOptions"></typeparam>
+        /// <typeparam name="TDisposable">A class the implements the IDisposable interface</typeparam>
+        /// <param name="this"></param>
+        /// <param name="disposableCreate">A function or method that will return an instance of your disposable type</param>
+        /// <param name="action">An action or method to interact with your disposable instance</param>
+        public static void Using<TDisposableOptions, TDisposable>(this TDisposableOptions @this, 
+            Func<TDisposableOptions, TDisposable> disposableCreate, Action<TDisposable> action)
+                where TDisposable : IDisposable
+        {
+            using (var disposable = disposableCreate(@this))
+                action(disposable);
+        }
+
         #region Result
         /// <summary>
         /// Executes the given function on a disposable type created from a Result object
@@ -43,15 +92,36 @@ namespace FunctionalCSharp
         /// <param name="functionResult"></param>
         /// <returns></returns>
         public static Result UsingResult<TDisposable>(Func<Result<TDisposable>> disposableCreateResult, Func<TDisposable, Result> functionResult)
-            where TDisposable : IDisposable
-        {
-            return disposableCreateResult()
-                .Bind(disposable =>
-                {
-                    using (var d = disposable)
-                        return functionResult(d);
-                });
-        }
+            where TDisposable : IDisposable =>
+                disposableCreateResult()
+                    .Bind(
+                        disposable =>
+                        {
+                            using (disposable)
+                                return functionResult(disposable);
+                        }
+                    );
+
+        /// <summary>
+        /// Uses the extended object as input for the function that returns an instance of the Result type with our disposable
+        /// </summary>
+        /// <typeparam name="TDisposableOptions"></typeparam>
+        /// <typeparam name="TDisposable"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="disposableCreateResult"></param>
+        /// <param name="functionResult"></param>
+        /// <returns></returns>
+        public static Result UsingResult<TDisposableOptions, TDisposable>(this TDisposableOptions @this,
+            Func<TDisposableOptions, Result<TDisposable>> disposableCreateResult, Func<TDisposable, Result> functionResult)
+                where TDisposable : IDisposable =>
+                    disposableCreateResult(@this)
+                        .Bind(
+                            disposable =>
+                            {
+                                using (disposable)
+                                    return functionResult(disposable);
+                            }
+                        );
 
         /// <summary>
         /// Executes the given function on a disposable type created from a Result object
@@ -63,15 +133,37 @@ namespace FunctionalCSharp
         /// <returns></returns>
         public static Result<TResult> UsingResult<TDisposable, TResult>(Func<Result<TDisposable>> disposableCreateResult, 
             Func<TDisposable, Result<TResult>> functionResult)
-                where TDisposable : IDisposable
-        {
-            return disposableCreateResult()
-                .Bind(disposable =>
-                {
-                    using (var d = disposable)
-                        return functionResult(d);
-                });
-        }        
+                where TDisposable : IDisposable =>
+                    disposableCreateResult()
+                        .Bind(
+                            disposable =>
+                            {
+                                using (disposable)
+                                    return functionResult(disposable);
+                            }
+                        );
+
+        /// <summary>
+        /// Uses the extended object as input for the function that returns an instance of the Result type with our disposable
+        /// </summary>
+        /// <typeparam name="TDisposableOptions"></typeparam>
+        /// <typeparam name="TDisposable"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="disposableCreateResult"></param>
+        /// <param name="functionResult"></param>
+        /// <returns></returns>
+        public static Result<TResult> UsingResult<TDisposableOptions, TDisposable, TResult>(this TDisposableOptions @this,
+            Func<TDisposableOptions, Result<TDisposable>> disposableCreateResult, Func<TDisposable, Result<TResult>> functionResult)
+                where TDisposable : IDisposable =>
+                    disposableCreateResult(@this)
+                        .Bind(
+                            disposable =>
+                            {
+                                using (disposable)
+                                    return functionResult(disposable);
+                            }
+                        );
         #endregion
 
         #region Async
