@@ -16,9 +16,8 @@ namespace FunctionalCSharp
         /// <typeparam name="T"></typeparam>
         /// <param name="this"></param>
         /// <returns></returns>
-        public static Result<T> IsNotNull<T>(this T @this) => 
-            @this != null ? Result<T>.Success(@this) : 
-                Result<T>.Failure("Value of {0} cannot be null".Format(typeof(T)));
+        public static bool IsNotNull<T>(this T @this) =>
+            @this != null;
 
         /// <summary>
         /// Checks that the extended object is not null
@@ -42,13 +41,8 @@ namespace FunctionalCSharp
         /// <typeparam name="T"></typeparam>
         /// <param name="this"></param>
         /// <returns></returns>
-        public static Result<T> IsNotDefault<T>(this T @this) =>
-            @this
-                .IsNotNull()
-                .Bind(t => 
-                    !t.Equals(default(T)) ? Result<T>.Success(t) : 
-                        Result<T>.Failure("Value of {0} cannot be the default for {0}".Format(typeof(T)))
-                );
+        public static bool IsNotDefault<T>(this T @this) =>
+            @this.IsNotNull() && !@this.Equals(default(T));
 
         /// <summary>
         /// Checks that the extended object is not null or the deafult for its type
@@ -63,10 +57,37 @@ namespace FunctionalCSharp
         public static Result<T> IsNotDefault<T>(this T @this, string failureMessage) =>
             @this
                 .IsNotNull(failureMessage)
-                .Bind(t => 
-                    !t.Equals(default(T)) ? Result<T>.Success(t) : 
-                        Result<T>.Failure(failureMessage)
-            );
+                .Bind(t => !t.Equals(default(T)) ? Result<T>.Success(t) : Result<T>.Failure(failureMessage));
+
+        /// <summary>
+        /// Executes the given function on the extended object when that object is not null
+        /// </summary>
+        /// <example>
+        /// 
+        /// </example>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="whenNotNull">The function to execute on the extended object when it is not null</param>
+        /// <returns></returns>
+        public static Result WhenNotNull<T>(this T @this, Func<T, Result> whenNotNull) =>
+            @this.IsNotNull() ? whenNotNull(@this) : Result.Failure(new ArgumentNullException());
+
+        /// <summary>
+        /// Executes the given function on the extended object when that object is not null
+        /// </summary>
+        /// <example>
+        /// 
+        /// </example>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="whenNotNull">The function to execute on the extended object when it is not null</param>
+        /// <param name="failureMessage"></param>
+        /// <returns></returns>
+        public static Result WhenNotNull<T>(this T @this, Func<T, Result> whenNotNull,
+            string failureMessage) =>
+                @this
+                    .IsNotNull(failureMessage)
+                    .Bind(t => whenNotNull(t));
 
         /// <summary>
         /// Executes the given function on the extended object when that object is not null
@@ -80,9 +101,7 @@ namespace FunctionalCSharp
         /// <param name="whenNotNull">The function to execute on the extended object when it is not null</param>
         /// <returns></returns>
         public static Result<TResult> WhenNotNull<T, TResult>(this T @this, Func<T, Result<TResult>> whenNotNull) =>
-            @this
-                .IsNotNull()
-                .Bind(t => whenNotNull(t));
+            @this.IsNotNull() ? whenNotNull(@this) : Result<TResult>.Failure(new ArgumentNullException());
 
         /// <summary>
         /// Executes the given function on the extended object when that object is not null
@@ -109,14 +128,42 @@ namespace FunctionalCSharp
         /// 
         /// </example>
         /// <typeparam name="T"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="whenNotDefault"></param>
+        /// <returns></returns>
+        public static Result WhenNotDefault<T>(this T @this, Func<T, Result> whenNotDefault) =>
+            @this.IsNotDefault() ? whenNotDefault(@this) : Result.Failure(new ArgumentException());
+
+        /// <summary>
+        /// Executes the given function on the extended object when that object is not its type default
+        /// </summary>
+        /// <example>
+        /// 
+        /// </example>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="whenNotDefault"></param>
+        /// <param name="failureMessage"></param>
+        /// <returns></returns>
+        public static Result WhenNotDefault<T>(this T @this, Func<T, Result> whenNotDefault,
+            string failureMessage) =>
+                @this
+                    .IsNotDefault(failureMessage)
+                    .Bind(t => whenNotDefault(t));
+
+        /// <summary>
+        /// Executes the given function on the extended object when that object is not its type default
+        /// </summary>
+        /// <example>
+        /// 
+        /// </example>
+        /// <typeparam name="T"></typeparam>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="this"></param>
         /// <param name="whenNotDefault"></param>
         /// <returns></returns>
         public static Result<TResult> WhenNotDefault<T, TResult>(this T @this, Func<T, Result<TResult>> whenNotDefault) =>
-            @this
-                .IsNotDefault()
-                .Bind(t => whenNotDefault(t));
+            @this.IsNotDefault() ? whenNotDefault(@this) : Result<TResult>.Failure(new ArgumentException());
 
         /// <summary>
         /// Executes the given function on the extended object when that object is not its type default
