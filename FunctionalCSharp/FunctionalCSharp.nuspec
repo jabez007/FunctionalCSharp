@@ -11,7 +11,7 @@
     <iconUrl>https://raw.githubusercontent.com/jabez007/FunctionalCSharp/master/icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Include generated documentation XML</releaseNotes>
+    <releaseNotes>Added Result class to include error code Enum</releaseNotes>
     <copyright>Copyright 2018</copyright>
     <tags>Functional Lambda</tags>
   </metadata>
