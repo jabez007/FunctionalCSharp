@@ -1,36 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace FunctionalCSharp
+namespace FunctionalCSharp.Results
 {
     /// <summary>
     /// Extension methods for exceptions and functionalizing the 'try-catch' block
     /// </summary>
     public static class ExceptionHandling
     {
-        /// <summary>
-        /// Gathers the exception type, message, and stack trace for the extended exception 
-        /// and all inner exceptions recursively.
-        /// </summary>
-        /// <param name="this"></param>
-        /// <param name="message"></param>
-        /// <returns></returns>
-        public static string GetMessageStack(this Exception @this, string message = "") =>
-            message
-                .WhenNotNullOrEmpty(m => string.Format("{0}{1}", m, Environment.NewLine))
-                .Append(@this._GetMessageStack())
-                .TrimEnd();
-
-        private static string _GetMessageStack(this Exception @this) =>
-            ""
-                .AppendFormat("\tException type: {1}{0}\tException Message: {2}{0}\tStack trace: {3}{0}",
-                    Environment.NewLine, @this.GetType(), @this.Message, @this.StackTrace)
-                .When(
-                    m => @this.InnerException != null,
-                    m => m.AppendFormat("\t---- BEGIN Inner Exception----{0}{1}\t---- END Inner Exception ----{0}",
-                        Environment.NewLine, @this.InnerException._GetMessageStack())
-                );
-
         #region object extensions
         /// <summary>
         /// 
@@ -41,7 +18,7 @@ namespace FunctionalCSharp
         /// <param name="tryFunction"></param>
         /// <param name="errorMessage"></param>
         /// <returns></returns>
-        public static Result Try<T, TException>(this T @this, Func<T, Result> tryFunction, string errorMessage = "")
+        public static IResult Try<T, TException>(this T @this, Func<T, IResult> tryFunction, string errorMessage = "")
             where TException : Exception
         {
             try
@@ -63,7 +40,7 @@ namespace FunctionalCSharp
         /// <param name="tryFunction"></param>
         /// <param name="catchFunction"></param>
         /// <returns></returns>
-        public static Result Try<T, TException>(this T @this, Func<T, Result> tryFunction, Func<TException, Result> catchFunction)
+        public static IResult Try<T, TException>(this T @this, Func<T, IResult> tryFunction, Func<TException, IResult> catchFunction)
             where TException : Exception
         {
             try
@@ -86,7 +63,7 @@ namespace FunctionalCSharp
         /// <param name="tryFunction"></param>
         /// <param name="errorMessage"></param>
         /// <returns></returns>
-        public static Result<TResult> Try<T, TResult, TException>(this T @this, Func<T, Result<TResult>> tryFunction, string errorMessage = "")
+        public static IResult<TResult> Try<T, TResult, TException>(this T @this, Func<T, IResult<TResult>> tryFunction, string errorMessage = "")
             where TException : Exception
         {
             try
@@ -109,8 +86,8 @@ namespace FunctionalCSharp
         /// <param name="tryFunction"></param>
         /// <param name="catchFunction"></param>
         /// <returns></returns>
-        public static Result<TResult> Try<T, TResult, TException>(this T @this, 
-            Func<T, Result<TResult>> tryFunction, Func<TException, Result<TResult>> catchFunction)
+        public static IResult<TResult> Try<T, TResult, TException>(this T @this, 
+            Func<T, IResult<TResult>> tryFunction, Func<TException, IResult<TResult>> catchFunction)
             where TException : Exception
         {
             try
@@ -133,7 +110,7 @@ namespace FunctionalCSharp
         /// <param name="tryFunction"></param>
         /// <param name="errorMessage"></param>
         /// <returns></returns>
-        public static async Task<Result> TryAsync<T, TException>(this T @this, Func<T, Task<Result>> tryFunction, string errorMessage = "")
+        public static async Task<IResult> TryAsync<T, TException>(this T @this, Func<T, Task<IResult>> tryFunction, string errorMessage = "")
             where TException : Exception
         {
             try
@@ -155,8 +132,8 @@ namespace FunctionalCSharp
         /// <param name="tryFunction"></param>
         /// <param name="catchFunction"></param>
         /// <returns></returns>
-        public static async Task<Result> TryAsync<T, TException>(this T @this, 
-            Func<T, Task<Result>> tryFunction, Func<TException, Result> catchFunction)
+        public static async Task<IResult> TryAsync<T, TException>(this T @this, 
+            Func<T, Task<IResult>> tryFunction, Func<TException, IResult> catchFunction)
             where TException : Exception
         {
             try
@@ -178,8 +155,8 @@ namespace FunctionalCSharp
         /// <param name="tryFunction"></param>
         /// <param name="catchFunction"></param>
         /// <returns></returns>
-        public static async Task<Result> TryAsync<T, TException>(this T @this, 
-            Func<T, Task<Result>> tryFunction, Func<TException, Task<Result>> catchFunction)
+        public static async Task<IResult> TryAsync<T, TException>(this T @this, 
+            Func<T, Task<IResult>> tryFunction, Func<TException, Task<IResult>> catchFunction)
             where TException : Exception
         {
             try
@@ -202,8 +179,8 @@ namespace FunctionalCSharp
         /// <param name="tryFunction"></param>
         /// <param name="errorMessage"></param>
         /// <returns></returns>
-        public static async Task<Result<TResult>> TryAsync<T, TResult, TException>(this T @this, 
-            Func<T, Task<Result<TResult>>> tryFunction, string errorMessage = "")
+        public static async Task<IResult<TResult>> TryAsync<T, TResult, TException>(this T @this, 
+            Func<T, Task<IResult<TResult>>> tryFunction, string errorMessage = "")
             where TException : Exception
         {
             try
@@ -226,8 +203,8 @@ namespace FunctionalCSharp
         /// <param name="tryFunction"></param>
         /// <param name="catchFunction"></param>
         /// <returns></returns>
-        public static async Task<Result<TResult>> TryAsync<T, TResult, TException>(this T @this, 
-            Func<T, Task<Result<TResult>>> tryFunction, Func<TException, Result<TResult>> catchFunction)
+        public static async Task<IResult<TResult>> TryAsync<T, TResult, TException>(this T @this, 
+            Func<T, Task<IResult<TResult>>> tryFunction, Func<TException, IResult<TResult>> catchFunction)
             where TException : Exception
         {
             try
@@ -250,8 +227,8 @@ namespace FunctionalCSharp
         /// <param name="tryFunction"></param>
         /// <param name="catchFunction"></param>
         /// <returns></returns>
-        public static async Task<Result<TResult>> TryAsync<T, TResult, TException>(this T @this, 
-            Func<T, Task<Result<TResult>>> tryFunction, Func<TException, Task<Result<TResult>>> catchFunction)
+        public static async Task<IResult<TResult>> TryAsync<T, TResult, TException>(this T @this, 
+            Func<T, Task<IResult<TResult>>> tryFunction, Func<TException, Task<IResult<TResult>>> catchFunction)
             where TException : Exception
         {
             try
@@ -276,7 +253,7 @@ namespace FunctionalCSharp
         /// <typeparam name="TException"></typeparam>
         /// <param name="this"></param>
         /// <returns></returns>
-        public static Func<Result> Catch<TException>(this Func<Result> @this)
+        public static Func<IResult> Catch<TException>(this Func<IResult> @this)
             where TException : Exception
         {
             return () =>
@@ -299,7 +276,7 @@ namespace FunctionalCSharp
         /// <param name="this"></param>
         /// <param name="catchFunction"></param>
         /// <returns></returns>
-        public static Func<Result> Catch<TException>(this Func<Result> @this, Func<TException, Result> catchFunction)
+        public static Func<IResult> Catch<TException>(this Func<IResult> @this, Func<TException, IResult> catchFunction)
             where TException : Exception
         {
             return () =>
@@ -322,7 +299,7 @@ namespace FunctionalCSharp
         /// <typeparam name="TException"></typeparam>
         /// <param name="this"></param>
         /// <returns></returns>
-        public static Func<Result<TResult>> Catch<TResult, TException>(this Func<Result<TResult>> @this)
+        public static Func<IResult<TResult>> Catch<TResult, TException>(this Func<IResult<TResult>> @this)
             where TException : Exception
         {
             return () =>
@@ -346,8 +323,8 @@ namespace FunctionalCSharp
         /// <param name="this"></param>
         /// <param name="catchFunction"></param>
         /// <returns></returns>
-        public static Func<Result<TResult>> Catch<TResult, TException>(this Func<Result<TResult>> @this, 
-            Func<TException, Result<TResult>> catchFunction)
+        public static Func<IResult<TResult>> Catch<TResult, TException>(this Func<IResult<TResult>> @this, 
+            Func<TException, IResult<TResult>> catchFunction)
             where TException : Exception
         {
             return () =>
@@ -372,7 +349,7 @@ namespace FunctionalCSharp
         /// <typeparam name="TException"></typeparam>
         /// <param name="this"></param>
         /// <returns></returns>
-        public static Func<T, Result> Catch<T, TException>(this Func<T, Result> @this)
+        public static Func<T, IResult> Catch<T, TException>(this Func<T, IResult> @this)
             where TException : Exception
         {
             return (x) =>
@@ -396,7 +373,7 @@ namespace FunctionalCSharp
         /// <param name="this"></param>
         /// <param name="catchFunction"></param>
         /// <returns></returns>
-        public static Func<T, Result> Catch<T, TException>(this Func<T, Result> @this, Func<TException, Result> catchFunction)
+        public static Func<T, IResult> Catch<T, TException>(this Func<T, IResult> @this, Func<TException, IResult> catchFunction)
             where TException : Exception
         {
             return (x) =>
@@ -420,7 +397,7 @@ namespace FunctionalCSharp
         /// <typeparam name="TException"></typeparam>
         /// <param name="this"></param>
         /// <returns></returns>
-        public static Func<T, Result<TResult>> Catch<T, TResult, TException>(this Func<T, Result<TResult>> @this)
+        public static Func<T, IResult<TResult>> Catch<T, TResult, TException>(this Func<T, IResult<TResult>> @this)
             where TException : Exception
         {
             return (x) =>
@@ -445,8 +422,8 @@ namespace FunctionalCSharp
         /// <param name="this"></param>
         /// <param name="catchFunction"></param>
         /// <returns></returns>
-        public static Func<T, Result<TResult>> Catch<T, TResult, TException>(this Func<T, Result<TResult>> @this, 
-            Func<TException, Result<TResult>> catchFunction)
+        public static Func<T, IResult<TResult>> Catch<T, TResult, TException>(this Func<T, IResult<TResult>> @this, 
+            Func<TException, IResult<TResult>> catchFunction)
             where TException : Exception
         {
             return (x) =>
@@ -472,7 +449,7 @@ namespace FunctionalCSharp
         /// <typeparam name="TException"></typeparam>
         /// <param name="this"></param>
         /// <returns></returns>
-        public static Func<T1, T2, Result> Catch<T1, T2, TException>(this Func<T1 ,T2, Result> @this)
+        public static Func<T1, T2, IResult> Catch<T1, T2, TException>(this Func<T1 ,T2, IResult> @this)
             where TException : Exception
         {
             return (x, y) =>
@@ -497,7 +474,7 @@ namespace FunctionalCSharp
         /// <param name="this"></param>
         /// <param name="catchFunction"></param>
         /// <returns></returns>
-        public static Func<T1, T2, Result> Catch<T1, T2, TException>(this Func<T1, T2, Result> @this, Func<TException, Result> catchFunction)
+        public static Func<T1, T2, IResult> Catch<T1, T2, TException>(this Func<T1, T2, IResult> @this, Func<TException, IResult> catchFunction)
             where TException : Exception
         {
             return (x, y) =>
@@ -522,7 +499,7 @@ namespace FunctionalCSharp
         /// <typeparam name="TException"></typeparam>
         /// <param name="this"></param>
         /// <returns></returns>
-        public static Func<T1, T2, Result<TResult>> Catch<T1, T2, TResult, TException>(this Func<T1, T2, Result<TResult>> @this)
+        public static Func<T1, T2, IResult<TResult>> Catch<T1, T2, TResult, TException>(this Func<T1, T2, IResult<TResult>> @this)
             where TException : Exception
         {
             return (x, y) =>
@@ -548,8 +525,8 @@ namespace FunctionalCSharp
         /// <param name="this"></param>
         /// <param name="catchFunction"></param>
         /// <returns></returns>
-        public static Func<T1, T2, Result<TResult>> Catch<T1, T2, TResult, TException>(this Func<T1, T2, Result<TResult>> @this, 
-            Func<TException, Result<TResult>> catchFunction)
+        public static Func<T1, T2, IResult<TResult>> Catch<T1, T2, TResult, TException>(this Func<T1, T2, IResult<TResult>> @this, 
+            Func<TException, IResult<TResult>> catchFunction)
             where TException : Exception
         {
             return (x, y) =>

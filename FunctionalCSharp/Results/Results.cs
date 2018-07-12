@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Threading.Tasks;
 
-namespace FunctionalCSharp
+namespace FunctionalCSharp.Results
 {
     /// <summary>
     /// Allows the return of the state of an operation along with a message to give context to any failures of the operation
     /// </summary>
-    public class Result
+    public class Result : IResult
     {
         /// <summary>
         /// 
@@ -28,7 +27,7 @@ namespace FunctionalCSharp
         /// </summary>
         /// <param name="isSuccess"></param>
         /// <param name="errorMessage"></param>
-        protected Result(bool isSuccess, string errorMessage = "")
+        protected internal Result(bool isSuccess, string errorMessage = "")
         {
             if (isSuccess && !string.IsNullOrEmpty(errorMessage))
                 throw new InvalidOperationException("Cannot have an error message for a successful Result"); 
@@ -67,6 +66,13 @@ namespace FunctionalCSharp
         /// 
         /// </summary>
         /// <returns></returns>
+        public IResult Failure() =>
+            new Result(IsSuccess, ErrorMessage);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override string ToString() =>
             IsFailure ? ErrorMessage : "Success";
 
@@ -98,22 +104,6 @@ namespace FunctionalCSharp
         {
             return base.GetHashCode();
         }
-
-        /// <summary>
-        /// Executes the given function if this is a successful Result
-        /// </summary>
-        /// <param name="ifSuccess"></param>
-        /// <returns></returns>
-        public Result Bind(Func<Result> ifSuccess) =>
-            IsSuccess ? ifSuccess() : Failure(ErrorMessage);
-
-        /// <summary>
-        /// Executes the given async function if this is a successful Result
-        /// </summary>
-        /// <param name="ifSuccess"></param>
-        /// <returns></returns>
-        public Task<Result> BindAsync(Func<Task<Result>> ifSuccess) =>
-            IsSuccess ? ifSuccess() : Task.FromResult(Failure(ErrorMessage));
     }
 
     /// <summary>
@@ -121,7 +111,7 @@ namespace FunctionalCSharp
     /// operation
     /// </summary>
     /// <typeparam name="T">The class of the return value for your operation</typeparam>
-    public class Result<T> : Result
+    public class Result<T> : Result, IResult<T>
     {
         /// <summary>
         /// The returned object of a successful function
@@ -134,7 +124,7 @@ namespace FunctionalCSharp
         /// <param name="value"></param>
         /// <param name="isSuccess"></param>
         /// <param name="errorMessage"></param>
-        protected Result(T value, bool isSuccess, string errorMessage = "")
+        protected internal Result(T value, bool isSuccess, string errorMessage = "")
             : base(isSuccess, errorMessage)
         {
             Value = value;
@@ -145,7 +135,7 @@ namespace FunctionalCSharp
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Result<T> Success(T value) => 
+        public static IResult<T> Success(T value) => 
             new Result<T>(value, true);
 
         /// <summary>
@@ -154,7 +144,7 @@ namespace FunctionalCSharp
         /// <param name="errorMessage"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Result<T> Failure(string errorMessage, T value = default) => 
+        public static IResult<T> Failure(string errorMessage, T value = default) => 
             new Result<T>(value, false, errorMessage);
 
         /// <summary>
@@ -164,8 +154,23 @@ namespace FunctionalCSharp
         /// <param name="errorMessage"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Result<T> Failure(Exception ex, string errorMessage = "", T value = default) =>
+        public static IResult<T> Failure(Exception ex, string errorMessage = "", T value = default) =>
             new Result<T>(value, false, ex.GetMessageStack(errorMessage));
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public new IResult Failure() =>
+            new Result(IsSuccess, ErrorMessage);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <returns></returns>
+        public IResult<TResult> Failure<TResult>() =>
+            new Result<TResult>(default, IsSuccess, ErrorMessage);
 
         /// <summary>
         /// 
@@ -209,53 +214,7 @@ namespace FunctionalCSharp
         public override int GetHashCode()
         {
             return base.GetHashCode();
-        }
-
-        /// <summary>
-        /// Executes the given function on the returned Value of this Result if this is a successful Result
-        /// </summary>
-        /// <example>
-        /// 
-        /// </example>
-        /// <param name="ifSuccess"></param>
-        /// <returns></returns>
-        public Result Bind(Func<T, Result> ifSuccess) =>
-            IsSuccess ? ifSuccess(Value) : Result.Failure(ErrorMessage);
-
-        /// <summary>
-        /// Executes the given function on the returned Value of this Result if this is a successful Result
-        /// </summary>
-        /// <example>
-        /// Result&lt;string&gt;.Success("hello").Bind(str => Result&lt;string&gt;.Success(str + " world"));
-        /// </example>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="ifSuccess">Function to execute on the successful Result</param>
-        /// <returns>If this Result was successful, the Result of the given function. Otherwise, this Result</returns>
-        public Result<TResult> Bind<TResult>(Func<T, Result<TResult>> ifSuccess) => 
-            IsSuccess ? ifSuccess(Value) : Result<TResult>.Failure(ErrorMessage);
-
-        /// <summary>
-        /// Executes the given async function on the returned Value of this Result if this is a successful Result
-        /// </summary>
-        /// <example>
-        /// 
-        /// </example>
-        /// <param name="ifSuccess"></param>
-        /// <returns></returns>
-        public Task<Result> BindAsync(Func<T, Task<Result>> ifSuccess) =>
-            IsSuccess ? ifSuccess(Value) : Task.FromResult(Result.Failure(ErrorMessage));
-
-        /// <summary>
-        /// Executes the given async function on the returned Value of this Result if this is a successful Result
-        /// </summary>
-        /// <example>
-        /// 
-        /// </example>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="ifSuccess">Function to execute on the successful Result</param>
-        /// <returns>If this Result was successful, the Result of the given function. Otherwise, this Result</returns>
-        public Task<Result<TResult>> BindAsync<TResult>(Func<T, Task<Result<TResult>>> ifSuccess) =>
-            IsSuccess ? ifSuccess(Value) : Task.FromResult(Result<TResult>.Failure(ErrorMessage));
+        }        
     }
 
     /// <summary>
@@ -263,7 +222,8 @@ namespace FunctionalCSharp
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="TEnum">An Enum type that specifies the different errors possible to be returned</typeparam>
-    public class Result<T, TEnum> : Result<T> where TEnum : Enum
+    public class Result<T, TEnum> : Result<T>, IResult<T, TEnum> 
+        where TEnum : Enum
     {
         /// <summary>
         /// 
@@ -277,7 +237,7 @@ namespace FunctionalCSharp
         /// <param name="isSuccess"></param>
         /// <param name="errorCode"></param>
         /// <param name="errorMessage"></param>
-        protected Result(T value, bool isSuccess, TEnum errorCode = default, string errorMessage = "")
+        protected internal Result(T value, bool isSuccess, TEnum errorCode = default, string errorMessage = "")
             : base(value, isSuccess, errorMessage)
         {
             if (isSuccess && errorCode.IsNotDefault())
@@ -295,7 +255,7 @@ namespace FunctionalCSharp
         /// <param name="errorMessage"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Result<T, TEnum> Failure(TEnum errorCode, string errorMessage = "", T value = default) =>
+        public static IResult<T, TEnum> Failure(TEnum errorCode, string errorMessage = "", T value = default) =>
             new Result<T, TEnum>(value, false, errorCode, errorMessage.IsNotNullOrEmpty() ? errorMessage : errorCode.ToString());
 
         /// <summary>
@@ -306,9 +266,24 @@ namespace FunctionalCSharp
         /// <param name="errorMessage"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Result<T, TEnum> Failure(Exception ex, TEnum errorCode, string errorMessage = "", T value = default) =>
+        public static IResult<T, TEnum> Failure(Exception ex, TEnum errorCode, string errorMessage = "", T value = default) =>
             new Result<T, TEnum>(value, false, errorCode, 
                 ex.GetMessageStack(errorMessage.IsNotNullOrEmpty() ? errorMessage : errorCode.ToString()));
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public new IResult<TEnum> Failure() =>
+            new Result<TEnum>(ErrorCode, IsSuccess, ErrorMessage);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <returns></returns>
+        public new IResult<TResult, TEnum> Failure<TResult>() =>
+            new Result<TResult, TEnum>(default, IsSuccess, ErrorCode, ErrorMessage);
 
         /// <summary>
         /// 
@@ -350,29 +325,5 @@ namespace FunctionalCSharp
         {
             return base.GetHashCode();
         }
-
-        /// <summary>
-        /// Executes the given function on the returned Value of this Result if this is a successful Result
-        /// </summary>
-        /// <example>
-        /// Result&lt;string&gt;.Success("hello").Bind(str => Result&lt;string&gt;.Success(str + " world"));
-        /// </example>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="ifSuccess">Function to execute on the successful Result</param>
-        /// <returns>If this Result was successful, the Result of the given function. Otherwise, this Result</returns>
-        public Result<TResult, TEnum> Bind<TResult>(Func<T, Result<TResult, TEnum>> ifSuccess) =>
-            IsSuccess ? ifSuccess(Value) : Result<TResult, TEnum>.Failure(ErrorCode, ErrorMessage);
-
-        /// <summary>
-        /// Executes the given async function on the returned Value of this Result if this is a successful Result
-        /// </summary>
-        /// <example>
-        /// 
-        /// </example>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="ifSuccess">Function to execute on the successful Result</param>
-        /// <returns>If this Result was successful, the Result of the given function. Otherwise, this Result</returns>
-        public Task<Result<TResult, TEnum>> BindAsync<TResult>(Func<T, Task<Result<TResult, TEnum>>> ifSuccess) =>
-            IsSuccess ? ifSuccess(Value) : Task.FromResult(Result<TResult, TEnum>.Failure(ErrorCode, ErrorMessage));
-    }
+    }    
 }
