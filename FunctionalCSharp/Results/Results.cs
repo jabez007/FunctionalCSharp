@@ -77,7 +77,7 @@ namespace FunctionalCSharp.Results
         /// </summary>
         /// <returns></returns>
         public IResult Failure() =>
-            new Result(IsSuccess, ErrorMessage);
+            new Result(false, ErrorMessage);
 
         /// <summary>
         /// 
@@ -174,7 +174,8 @@ namespace FunctionalCSharp.Results
         /// <param name="r2"></param>
         /// <returns></returns>
         public static IResult<T> operator +(Result<T> r1, Result<T> r2) =>
-            new Result<T>(default, r1.IsSuccess && r2.IsSuccess,
+            new Result<T>(typeof(T).IsEnum ? (T)Enum.ToObject(typeof(T), ((int)(object)r1.Value | (int)(object)r2.Value)) : default,
+                r1.IsSuccess && r2.IsSuccess,
                 (r1.IsFailure ? string.Format("{1}{0}", Environment.NewLine, r1.ErrorMessage) : "") + (r2.IsFailure ? r2.ErrorMessage : ""));
 
         /// <summary>
@@ -182,7 +183,7 @@ namespace FunctionalCSharp.Results
         /// </summary>
         /// <returns></returns>
         public new IResult Failure() =>
-            new Result(IsSuccess, ErrorMessage);
+            new Result(false, ErrorMessage);
 
         /// <summary>
         /// 
@@ -190,7 +191,7 @@ namespace FunctionalCSharp.Results
         /// <typeparam name="TResult"></typeparam>
         /// <returns></returns>
         public IResult<TResult> Failure<TResult>() =>
-            new Result<TResult>(default, IsSuccess, ErrorMessage);
+            new Result<TResult>(typeof(TResult) == typeof(T) ? (TResult)(object)Value : default, false, ErrorMessage);
 
         /// <summary>
         /// 
@@ -314,7 +315,7 @@ namespace FunctionalCSharp.Results
         /// </summary>
         /// <returns></returns>
         public new IResult<TEnum> Failure() =>
-            new Result<TEnum>(ErrorCode, IsSuccess, ErrorMessage);
+            new Result<TEnum>(ErrorCode, false, ErrorMessage);
 
         /// <summary>
         /// 
@@ -322,7 +323,7 @@ namespace FunctionalCSharp.Results
         /// <typeparam name="TResult"></typeparam>
         /// <returns></returns>
         public new IResult<TResult, TEnum> Failure<TResult>() =>
-            new Result<TResult, TEnum>(default, IsSuccess, ErrorCode, ErrorMessage);
+            new Result<TResult, TEnum>(typeof(TResult) == typeof(T) ? (TResult)(object)Value : default, false, ErrorCode, ErrorMessage);
 
         /// <summary>
         /// 
