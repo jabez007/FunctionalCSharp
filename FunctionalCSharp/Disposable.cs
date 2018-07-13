@@ -159,16 +159,18 @@ namespace FunctionalCSharp
         /// Applies the Using extension method to a disposable type object embedded in a Task for an async Action
         /// </summary>
         /// <remarks>
-        /// seems redundant with the above UsingAsync extension, but that would return Task&lt;Task&gt;
+        /// if the action is an async function, then we need to await it to keep the using block open
         /// </remarks>
         /// <typeparam name="TDisposable"></typeparam>
         /// <param name="this"></param>
         /// <param name="actionAsync"></param>
         /// <returns></returns>
         public static async Task UsingAsync<TDisposable>(this Task<TDisposable> @this, Func<TDisposable, Task> actionAsync)
-            where TDisposable : IDisposable =>
-                await (await @this)
-                    .Using(actionAsync);
+            where TDisposable : IDisposable
+        {
+            using (var disposable = await @this)
+                await actionAsync(disposable);
+        }
 
         /// <summary>
         /// 
@@ -193,6 +195,47 @@ namespace FunctionalCSharp
         /// <returns></returns>
         public static Task UsingAsync<TDisposableOptions, TDisposable>(this TDisposableOptions @this,
             Func<TDisposableOptions, Task<TDisposable>> disposableCreateAsync, Func<TDisposable, Task> actionAsync)
+                where TDisposable : IDisposable =>
+                    disposableCreateAsync(@this)
+                        .UsingAsync(actionAsync);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TDisposable"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="actionAsync"></param>
+        /// <returns></returns>
+        public static async Task UsingAsync<TDisposable>(this TDisposable @this, Func<TDisposable, Task> actionAsync)
+            where TDisposable : IDisposable
+        {
+            using (@this)
+                await actionAsync(@this);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TDisposable"></typeparam>
+        /// <param name="disposableCreateAsync"></param>
+        /// <param name="actionAsync"></param>
+        /// <returns></returns>
+        public static Task UsingAsync<TDisposable>(Func<TDisposable> disposableCreateAsync, Func<TDisposable, Task> actionAsync)
+            where TDisposable : IDisposable =>
+                disposableCreateAsync()
+                    .UsingAsync(actionAsync);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TDisposableOptions"></typeparam>
+        /// <typeparam name="TDisposable"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="disposableCreateAsync"></param>
+        /// <param name="actionAsync"></param>
+        /// <returns></returns>
+        public static Task UsingAsync<TDisposableOptions, TDisposable>(this TDisposableOptions @this,
+            Func<TDisposableOptions, TDisposable> disposableCreateAsync, Func<TDisposable, Task> actionAsync)
                 where TDisposable : IDisposable =>
                     disposableCreateAsync(@this)
                         .UsingAsync(actionAsync);
@@ -245,7 +288,7 @@ namespace FunctionalCSharp
         /// Applies the Using extension method to a disposable type object embedded in a Task
         /// </summary>
         /// <remarks>
-        /// seems redundant with the above UsingAsync extension, but that would return Task&lt;Task&lt;TResult&gt;&gt;
+        /// if the function is async, then we need to await it for the using block to stay open
         /// </remarks>
         /// <typeparam name="TDisposable"></typeparam>
         /// <typeparam name="TResult"></typeparam>
@@ -253,9 +296,11 @@ namespace FunctionalCSharp
         /// <param name="functionAsync"></param>
         /// <returns></returns>
         public static async Task<TResult> UsingAsync<TDisposable, TResult>(this Task<TDisposable> @this,
-            Func<TDisposable, Task<TResult>> functionAsync) where TDisposable : IDisposable =>
-                    await (await @this)
-                        .Using(functionAsync);
+            Func<TDisposable, Task<TResult>> functionAsync) where TDisposable : IDisposable
+        {
+            using (var disposable = await @this)
+                return await functionAsync(disposable);
+        }
 
         /// <summary>
         /// Allows async constructor for disposable type and async function inside 'using' block 
@@ -282,6 +327,50 @@ namespace FunctionalCSharp
         /// <returns></returns>
         public static Task<TResult> UsingAsync<TDisposableOptions, TDisposable, TResult>(this TDisposableOptions @this,
             Func<TDisposableOptions, Task<TDisposable>> disposableCreateAsync, Func<TDisposable, Task<TResult>> functionAsync)
+                where TDisposable : IDisposable =>
+                    disposableCreateAsync(@this)
+                        .UsingAsync(functionAsync);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TDisposable"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="functionAsync"></param>
+        /// <returns></returns>
+        public static async Task<TResult> UsingAsync<TDisposable, TResult>(this TDisposable @this,
+            Func<TDisposable, Task<TResult>> functionAsync) where TDisposable : IDisposable
+        {
+            using (@this)
+                return await functionAsync(@this);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TDisposable"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="disposableCreateAsync"></param>
+        /// <param name="functionAsync"></param>
+        /// <returns></returns>
+        public static Task<TResult> UsingAsync<TDisposable, TResult>(Func<TDisposable> disposableCreateAsync,
+            Func<TDisposable, Task<TResult>> functionAsync) where TDisposable : IDisposable =>
+                    disposableCreateAsync()
+                        .UsingAsync(functionAsync);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TDisposableOptions"></typeparam>
+        /// <typeparam name="TDisposable"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="disposableCreateAsync"></param>
+        /// <param name="functionAsync"></param>
+        /// <returns></returns>
+        public static Task<TResult> UsingAsync<TDisposableOptions, TDisposable, TResult>(this TDisposableOptions @this,
+            Func<TDisposableOptions, TDisposable> disposableCreateAsync, Func<TDisposable, Task<TResult>> functionAsync)
                 where TDisposable : IDisposable =>
                     disposableCreateAsync(@this)
                         .UsingAsync(functionAsync);
