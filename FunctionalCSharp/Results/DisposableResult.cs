@@ -3,7 +3,10 @@ using System.Threading.Tasks;
 
 namespace FunctionalCSharp.Results
 {
-    public static class Disposable
+    /// <summary>
+    /// 
+    /// </summary>
+    public static class DisposableResult
     {
         #region IResult
         /// <summary>
@@ -145,7 +148,7 @@ namespace FunctionalCSharp.Results
         public static Task<IResult> UsingResultAsync<TDisposable>(this IResult<TDisposable> @this,
             Func<TDisposable, Task<IResult>> actionResultAsync) where TDisposable : IDisposable =>
                 @this
-                    .BindAsync(disposable => disposable.Using(actionResultAsync));
+                    .BindAsync(disposable => disposable.UsingAsync(actionResultAsync));
 
         /// <summary>
         /// 
@@ -183,8 +186,7 @@ namespace FunctionalCSharp.Results
         /// <returns></returns>
         public static async Task<IResult> UsingResultAsync<TDisposable>(this Task<IResult<TDisposable>> @this,
             Func<TDisposable, Task<IResult>> actionResultAsync) where TDisposable : IDisposable =>
-                await (await @this)
-                    .UsingResultAsync(actionResultAsync);
+                await (await @this).UsingResultAsync(actionResultAsync);
 
         /// <summary>
         /// 
@@ -268,7 +270,7 @@ namespace FunctionalCSharp.Results
         public static Task<IResult<TResult>> UsingResultAsync<TDisposable, TResult>(this IResult<TDisposable> @this,
             Func<TDisposable, Task<IResult<TResult>>> functionResultAsync) where TDisposable : IDisposable =>
                 @this
-                    .BindAsync(disposable => disposable.Using(functionResultAsync));
+                    .BindAsync(disposable => disposable.UsingAsync(functionResultAsync));
 
         /// <summary>
         /// 
@@ -309,8 +311,7 @@ namespace FunctionalCSharp.Results
         /// <returns></returns>
         public static async Task<IResult<TResult>> UsingResultAsync<TDisposable, TResult>(this Task<IResult<TDisposable>> @this,
             Func<TDisposable, Task<IResult<TResult>>> functionResultAsync) where TDisposable : IDisposable =>
-                await (await @this)
-                    .UsingResultAsync(functionResultAsync);
+                await (await @this).UsingResultAsync(functionResultAsync);
 
         /// <summary>
         /// 
