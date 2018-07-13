@@ -42,7 +42,7 @@ namespace FunctionalCSharp.Results
         /// Creates a successful Result object
         /// </summary>
         /// <returns></returns>
-        public static Result Success() => 
+        public static IResult Success() => 
             new Result(true);
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace FunctionalCSharp.Results
         /// </summary>
         /// <param name="errorMessage"></param>
         /// <returns></returns>
-        public static Result Failure(string errorMessage) => 
+        public static IResult Failure(string errorMessage) => 
             new Result(false, errorMessage);
 
         /// <summary>
@@ -59,8 +59,18 @@ namespace FunctionalCSharp.Results
         /// <param name="ex"></param>
         /// <param name="errorMessage"></param>
         /// <returns></returns>
-        public static Result Failure(Exception ex, string errorMessage = "") =>
-            new Result(false, string.Format("{0}{1}{2}", errorMessage, Environment.NewLine, ex.GetMessageStack()));
+        public static IResult Failure(Exception ex, string errorMessage = "") =>
+            new Result(false, ex.GetMessageStack(errorMessage));
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="r1"></param>
+        /// <param name="r2"></param>
+        /// <returns></returns>
+        public static IResult operator +(Result r1, Result r2) =>
+            new Result(r1.IsSuccess && r2.IsSuccess,
+                (r1.IsFailure ? string.Format("{1}{0}", Environment.NewLine, r1.ErrorMessage) : "") + (r2.IsFailure ? r2.ErrorMessage : ""));
 
         /// <summary>
         /// 
@@ -160,6 +170,16 @@ namespace FunctionalCSharp.Results
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="r1"></param>
+        /// <param name="r2"></param>
+        /// <returns></returns>
+        public static IResult<T> operator +(Result<T> r1, Result<T> r2) =>
+            new Result<T>(default, r1.IsSuccess && r2.IsSuccess,
+                (r1.IsFailure ? string.Format("{1}{0}", Environment.NewLine, r1.ErrorMessage) : "") + (r2.IsFailure ? r2.ErrorMessage : ""));
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <returns></returns>
         public new IResult Failure() =>
             new Result(IsSuccess, ErrorMessage);
@@ -223,7 +243,7 @@ namespace FunctionalCSharp.Results
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="TEnum">An Enum type that specifies the different errors possible to be returned</typeparam>
     public class Result<T, TEnum> : Result<T>, IResult<T, TEnum> 
-        where TEnum : Enum
+        where TEnum : struct, Enum
     {
         /// <summary>
         /// 
@@ -249,6 +269,14 @@ namespace FunctionalCSharp.Results
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public new static IResult<T, TEnum> Success(T value) =>
+            new Result<T, TEnum>(value, true);
+
+        /// <summary>
         /// Creates a failed Result object with the given error code and error message
         /// </summary>
         /// <param name="errorCode"></param>
@@ -269,6 +297,17 @@ namespace FunctionalCSharp.Results
         public static IResult<T, TEnum> Failure(Exception ex, TEnum errorCode, string errorMessage = "", T value = default) =>
             new Result<T, TEnum>(value, false, errorCode, 
                 ex.GetMessageStack(errorMessage.IsNotNullOrEmpty() ? errorMessage : errorCode.ToString()));
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="r1"></param>
+        /// <param name="r2"></param>
+        /// <returns></returns>
+        public static IResult<T, TEnum> operator +(Result<T, TEnum> r1, Result<T, TEnum> r2) =>
+            new Result<T, TEnum>(default, r1.IsSuccess && r2.IsSuccess, 
+                (TEnum)Enum.ToObject(typeof(TEnum), ((int)(object)r1.ErrorCode | (int)(object)r2.ErrorCode)),  // bitwise or to combine the error codes
+                (r1.IsFailure ? string.Format("{1}{0}", Environment.NewLine, r1.ErrorMessage) : "") + (r2.IsFailure ? r2.ErrorMessage : ""));
 
         /// <summary>
         /// 
