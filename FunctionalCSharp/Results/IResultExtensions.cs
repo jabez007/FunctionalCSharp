@@ -27,6 +27,17 @@ namespace FunctionalCSharp.Results
         /// <returns></returns>
         public static Task<IResult> BindAsync(this IResult @this, Func<Task<IResult>> ifSuccessAsync) =>
             @this.IsSuccess ? ifSuccessAsync() : Task.FromResult(@this.Failure());
+
+        /// <summary>
+        /// Transforms the extended IResult object into an IResult object that holds ErrorCodes as well. 
+        /// If the extended IResult object is a successful IResult, then the new IResult will be also.
+        /// </summary>
+        /// <typeparam name="TEnum"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="errorCode"></param>
+        /// <returns></returns>
+        public static IResult<TEnum> ToErrorCodeResult<TEnum>(this IResult @this, TEnum errorCode) where TEnum : Enum =>
+            @this.IsSuccess ? Result<TEnum>.Success(default) : Result<TEnum>.Failure(@this.ErrorMessage, errorCode);
         #endregion
 
         #region IResult<T>
@@ -80,6 +91,18 @@ namespace FunctionalCSharp.Results
         /// <returns>If this Result was successful, the Result of the given function. Otherwise, this Result</returns>
         public static Task<IResult<TResult>> BindAsync<T, TResult>(this IResult<T> @this, Func<T, Task<IResult<TResult>>> ifSuccessAsync) =>
             @this.IsSuccess ? ifSuccessAsync(@this.Value) : Task.FromResult(@this.Failure<TResult>());
+
+        /// <summary>
+        /// Transforms the extended IResult object into an IResult object that holds ErrorCodes as well. 
+        /// If the extended IResult object is a successful IResult, then the new IResult will be also.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TEnum"></typeparam>
+        /// <param name="this"></param>
+        /// <param name="errorCode"></param>
+        /// <returns></returns>
+        public static IResult<T, TEnum> ToErrorCodeResult<T, TEnum>(this IResult<T> @this, TEnum errorCode) where TEnum : struct, Enum =>
+            @this.IsSuccess ? Result<T, TEnum>.Success(@this.Value) : Result<T, TEnum>.Failure(errorCode, @this.ErrorMessage, @this.Value); 
         #endregion
 
         #region IResult<TEnum>
