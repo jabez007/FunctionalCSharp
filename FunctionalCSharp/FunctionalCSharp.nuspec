@@ -11,7 +11,7 @@
     <iconUrl>https://raw.githubusercontent.com/jabez007/FunctionalCSharp/master/icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Refactored Results classes to make it easier to inherit from</releaseNotes>
+    <releaseNotes>Implementing some extension methods to give IEnumerable object functionality similar to that found in Python</releaseNotes>
     <copyright>Copyright 2018</copyright>
     <tags>Functional Lambda</tags>
   </metadata>

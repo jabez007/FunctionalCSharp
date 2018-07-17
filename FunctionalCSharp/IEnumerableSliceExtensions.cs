@@ -47,6 +47,9 @@ namespace FunctionalCSharp
         /// <summary>
         /// Slice IEnumerable objects similar to how you would lists in Python
         /// </summary>
+        /// <example>
+        /// 
+        /// </example>
         /// <typeparam name="T"></typeparam>
         /// <param name="this"></param>
         /// <param name="startingIndex"></param>
