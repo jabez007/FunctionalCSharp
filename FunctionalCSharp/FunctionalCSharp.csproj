@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Disposable.cs" />
     <Compile Include="ExceptionExtensions.cs" />
+    <Compile Include="IEnumerableSliceExtensions.cs" />
     <Compile Include="Results\ExceptionHandling.cs" />
     <Compile Include="FunctionalExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
