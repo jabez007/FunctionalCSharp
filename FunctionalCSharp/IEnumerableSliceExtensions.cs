@@ -59,33 +59,38 @@ namespace FunctionalCSharp
         public static IEnumerable<T> Slice<T>(this IEnumerable<T> @this, int? startingIndex, int? exclusiveEndIndex, int step = 1)
         {
             if (step == 0)
-                yield break;
+                return new T[0];
 
-            int _startingIndex = startingIndex ?? (step < 0 ? @this.Count() - 1 : 0);
+            int count = @this.Count();
+
+            int _startingIndex = startingIndex ?? (step < 0 ? count - 1 : 0);
             if (_startingIndex < 0)
-                _startingIndex += @this.Count();
+                _startingIndex += count;
 
-            int _exclusiveEndIndex = exclusiveEndIndex ?? (step < 0 ? -1 : @this.Count());
+            int _exclusiveEndIndex = exclusiveEndIndex ?? (step < 0 ? -1 : count);
             if (exclusiveEndIndex.HasValue && _exclusiveEndIndex < 0)  // the negative was specifically passed in
-                _exclusiveEndIndex += @this.Count();
+                _exclusiveEndIndex += count;
 
             if (step < 0)
             {
                 if (_startingIndex < _exclusiveEndIndex)
-                    yield break;
+                    return new T[0];
 
-                for (int i = _startingIndex; i > _exclusiveEndIndex; i += step)
-                    yield return @this.ElementAt(i);
+                return @this.Where((t, i) =>
+                    (i <= _startingIndex) && (i > _exclusiveEndIndex) && (((_startingIndex - i) % step) == 0))
+                    .Reverse();
             }
 
             if (step > 0)
             {
                 if (_startingIndex > _exclusiveEndIndex)
-                    yield break;
+                    return new T[0];
 
-                for (int i = _startingIndex; i < _exclusiveEndIndex; i += step)
-                    yield return @this.ElementAt(i);
+                return @this.Where((t, i) =>
+                    (i >= _startingIndex) && (i < _exclusiveEndIndex) && (((i - _startingIndex) % step) == 0));
             }
+
+            return new T[0];
         }
     }
 }
