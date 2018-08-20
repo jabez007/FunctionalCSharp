@@ -55,13 +55,16 @@
     <Compile Include="Results\Results.cs" />
     <Compile Include="Results\TaskIResultExtensions.cs" />
     <Compile Include="Results\ValidationExtensions.cs" />
+    <Compile Include="Results\RetryHandler.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="Switch.cs" />
     <Compile Include="ValidationExtensions.cs" />
     <Compile Include="XmlExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="FunctionalCSharp.nuspec" />
+    <None Include="FunctionalCSharp.nuspec">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
