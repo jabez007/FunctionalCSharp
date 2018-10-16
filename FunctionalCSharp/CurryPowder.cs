@@ -19,7 +19,7 @@ namespace FunctionalCSharp
       a => b => function(a, b);
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -31,7 +31,7 @@ namespace FunctionalCSharp
       a => b => c => function(a, b, c);
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
