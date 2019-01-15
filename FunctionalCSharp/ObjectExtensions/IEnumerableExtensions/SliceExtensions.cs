@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace FunctionalCSharp
+namespace FunctionalCSharp.ObjectExtensions.IEnumerableExtensions
 {
   /// <summary>
   /// Extensions methods to provide some list functionality similar to that found in Python
   /// </summary>
-  public static class IEnumerableSliceExtensions
+  public static class SliceExtensions
   {
     /// <summary>
     /// An extension of the System.Linq IEnumberable.ElementAt that allows the use of negetive indices like Python.

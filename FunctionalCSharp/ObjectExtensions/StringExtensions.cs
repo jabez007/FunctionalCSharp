@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Security;
 
-namespace FunctionalCSharp
+namespace FunctionalCSharp.ObjectExtensions
 {
   /// <summary>
   /// Extension methods for string objects

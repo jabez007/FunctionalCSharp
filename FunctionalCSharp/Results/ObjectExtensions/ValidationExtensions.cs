@@ -1,11 +1,12 @@
-﻿using System;
+﻿using FunctionalCSharp.ObjectExtensions;
+using System;
 
-namespace FunctionalCSharp.Results
+namespace FunctionalCSharp.Results.ObjectExtensions
 {
   /// <summary>
   ///
   /// </summary>
-  public static class ValidationResultExtensions
+  public static class ValidationExtensions
   {
     /// <summary>
     /// Checks that the extended object is not null

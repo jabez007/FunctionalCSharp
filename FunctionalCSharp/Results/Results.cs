@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FunctionalCSharp.ObjectExtensions;
+using FunctionalCSharp.Results.ObjectExtensions;
+using System;
 
 namespace FunctionalCSharp.Results
 {
@@ -203,13 +205,11 @@ namespace FunctionalCSharp.Results
       other
         .WhenNotNull(  // If other is null (from the cast in the override method), then the default bool type is returned
           @this => @this
-            .SwitchOn<Result<T>, bool>()
-              .Case(
-                t => t.IsSuccess && other.IsSuccess,
-                t => t.Value.Equals(other.Value)  // if both Results are Success Results, check the Equals of the Value objects
-              )
-              .Default(t => t.IsFailure && other.IsFailure)  // Otherwise check if both Results are Failure Results
-             .Map(r => Result<bool>.Success(r))
+            .Switch(
+              (t => t.IsSuccess && other.IsSuccess, t => t.Value.Equals(other.Value)),  // if both Results are Success Results, check the Equals of the Value objects
+              (t => true, t => t.IsFailure && other.IsFailure)  // Otherwise check if both Results are Failure Results
+            )
+            .Map(r => Result<bool>.Success(r))
         )
         .Value;  // the default value for bool type is false
 
@@ -321,16 +321,11 @@ namespace FunctionalCSharp.Results
       other
         .WhenNotNull(  // If other is null (from the cast in the override method), then the default bool type is returned
           @this => @this
-            .SwitchOn<Result<T, TEnum>, bool>()
-              .Case(
-                t => t.IsSuccess && other.IsSuccess,
-                t => t.Value.Equals(other.Value)  // if both Results are Success Results, check the Equals of the Value objects
-              )
-              .Case(
-                t => t.IsFailure && other.IsFailure,  // elif both Results are Failure Results
-                t => t.ErrorCode.Equals(other.ErrorCode)  // are they are the same error code?
-              )
-              .Default(t => false)  // else these aren't equal
+            .Switch(
+              (t => t.IsSuccess && other.IsSuccess, t => t.Value.Equals(other.Value)),  // if both Results are Success Results, check the Equals of the Value objects
+              (t => t.IsFailure && other.IsFailure, t => t.ErrorCode.Equals(other.ErrorCode)), // elif both Results are Failure Results are they are the same error code?
+              (t => true, t => false) // else these aren't equal
+            )
             .Map(r => Result<bool>.Success(r))
         )
         .Value;  // the default value for bool type is false

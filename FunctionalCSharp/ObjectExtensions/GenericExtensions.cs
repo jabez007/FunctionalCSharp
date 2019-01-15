@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace FunctionalCSharp
+namespace FunctionalCSharp.ObjectExtensions
 {
   /// <summary>
   /// Extension methods to provide some generic functionality
@@ -38,17 +38,6 @@ namespace FunctionalCSharp
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="this"></param>
-    /// <param name="action"></param>
-    /// <returns></returns>
-    public static async Task<T> TeeAsync<T>(this Task<T> @this, Action<T> action) =>
-      (await @this)
-        .Tee(action);
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="this"></param>
     /// <param name="actionAsync"></param>
     /// <returns></returns>
     public static async Task<T> TeeAsync<T>(this T @this, Func<T, Task> actionAsync)
@@ -56,17 +45,6 @@ namespace FunctionalCSharp
       await actionAsync(@this);
       return @this;
     }
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="this"></param>
-    /// <param name="actionAsync"></param>
-    /// <returns></returns>
-    public static async Task<T> TeeAsync<T>(this Task<T> @this, Func<T, Task> actionAsync) =>
-      await (await @this)
-        .TeeAsync(actionAsync);
 
     #endregion Tee
 
@@ -96,30 +74,6 @@ namespace FunctionalCSharp
     /// <returns></returns>
     public static Task<T> WhenAsync<T>(this T @this, Func<T, bool> condition, Func<T, Task<T>> ifTrueAsync) =>
       condition(@this) ? ifTrueAsync(@this) : Task.FromResult(@this);
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="this"></param>
-    /// <param name="condition"></param>
-    /// <param name="ifTrue"></param>
-    /// <returns></returns>
-    public static async Task<T> WhenAsync<T>(this Task<T> @this, Func<T, bool> condition, Func<T, T> ifTrue) =>
-      (await @this)
-        .When(condition, ifTrue);
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="this"></param>
-    /// <param name="condition"></param>
-    /// <param name="ifTrueAsync"></param>
-    /// <returns></returns>
-    public static async Task<T> WhenAsync<T>(this Task<T> @this, Func<T, bool> condition, Func<T, Task<T>> ifTrueAsync) =>
-      await (await @this)
-        .WhenAsync(condition, ifTrueAsync);
 
     #endregion When
 
@@ -151,30 +105,6 @@ namespace FunctionalCSharp
       @this
         .Map(transformationAsync);
 
-    /// <summary>
-    ///
-    /// </summary>
-    /// <typeparam name="TSource"></typeparam>
-    /// <typeparam name="TResult"></typeparam>
-    /// <param name="this"></param>
-    /// <param name="transformation"></param>
-    /// <returns></returns>
-    public static async Task<TResult> MapAsync<TSource, TResult>(this Task<TSource> @this, Func<TSource, TResult> transformation) =>
-      (await @this)
-        .Map(transformation);
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <typeparam name="TSource"></typeparam>
-    /// <typeparam name="TResult"></typeparam>
-    /// <param name="this"></param>
-    /// <param name="transformationAsync"></param>
-    /// <returns></returns>
-    public static async Task<TResult> MapAsync<TSource, TResult>(this Task<TSource> @this, Func<TSource, Task<TResult>> transformationAsync) =>
-      await (await @this)
-        .MapAsync(transformationAsync);
-
     #endregion Map
 
     #region Map When
@@ -203,34 +133,6 @@ namespace FunctionalCSharp
     public static Task<TResult> MapWhenAsync<TSource, TResult>(this TSource @this, Func<TSource, bool> condition,
       Func<TSource, Task<TResult>> transformationIfTrueAsync) =>
         condition(@this) ? @this.MapAsync(transformationIfTrueAsync) : Task.FromResult(default(TResult));
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <typeparam name="TSource"></typeparam>
-    /// <typeparam name="TResult"></typeparam>
-    /// <param name="this"></param>
-    /// <param name="condition"></param>
-    /// <param name="transformationIfTrue"></param>
-    /// <returns></returns>
-    public static async Task<TResult> MapWhenAsync<TSource, TResult>(this Task<TSource> @this, Func<TSource, bool> condition,
-      Func<TSource, TResult> transformationIfTrue) =>
-        (await @this)
-          .MapWhen(condition, transformationIfTrue);
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <typeparam name="TSource"></typeparam>
-    /// <typeparam name="TResult"></typeparam>
-    /// <param name="this"></param>
-    /// <param name="condition"></param>
-    /// <param name="transformationIfTrueAsync"></param>
-    /// <returns></returns>
-    public static async Task<TResult> MapWhenAsync<TSource, TResult>(this Task<TSource> @this, Func<TSource, bool> condition,
-      Func<TSource, Task<TResult>> transformationIfTrueAsync) =>
-        await (await @this)
-          .MapWhenAsync(condition, transformationIfTrueAsync);
 
     #endregion Map When
   }

@@ -3,7 +3,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace FunctionalCSharp
+namespace FunctionalCSharp.ObjectExtensions
 {
   /// <summary>
   /// Extension methods to functionalize serializing an object to and from XML
