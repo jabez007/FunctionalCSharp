@@ -1,5 +1,4 @@
 ﻿using FunctionalCSharp.ObjectExtensions;
-using FunctionalCSharp.Results.ObjectExtensions;
 using System;
 
 namespace FunctionalCSharp.Results
@@ -99,12 +98,14 @@ namespace FunctionalCSharp.Results
     /// </summary>
     /// <param name="other"></param>
     /// <returns></returns>
-    public bool Equals(Result other) =>
-      other
-        .WhenNotNull(  // If other is null (from the cast in the override method), then the default bool type is returned
-          @this => Result<bool>.Success(@this.IsSuccess == other.IsSuccess)
-        )
-        .Value;  // the default value for bool type is false
+    public bool Equals(Result other)
+    {
+      if (other != null)
+      {
+        return IsSuccess == other.IsSuccess;
+      }
+      return false;
+    }
 
     /// <summary>
     /// TODO
@@ -201,17 +202,17 @@ namespace FunctionalCSharp.Results
     /// </summary>
     /// <param name="other"></param>
     /// <returns></returns>
-    public bool Equals(Result<T> other) =>
-      other
-        .WhenNotNull(  // If other is null (from the cast in the override method), then the default bool type is returned
-          @this => @this
-            .Switch(
-              (t => t.IsSuccess && other.IsSuccess, t => t.Value.Equals(other.Value)),  // if both Results are Success Results, check the Equals of the Value objects
-              (t => true, t => t.IsFailure && other.IsFailure)  // Otherwise check if both Results are Failure Results
-            )
-            .Map(r => Result<bool>.Success(r))
-        )
-        .Value;  // the default value for bool type is false
+    public bool Equals(Result<T> other)
+    {
+      if (other != null)
+      {
+        return this.Switch(
+          (t => t.IsSuccess && other.IsSuccess, t => t.Value.Equals(other.Value)),  // if both Results are Success Results, check the Equals of the Value objects
+          (t => true, t => t.IsFailure && other.IsFailure)  // Otherwise check if both Results are Failure Results
+          );
+      }
+      return false;
+    }
 
     /// <summary>
     /// TODO
@@ -317,18 +318,18 @@ namespace FunctionalCSharp.Results
     /// </summary>
     /// <param name="other"></param>
     /// <returns></returns>
-    public bool Equals(Result<T, TEnum> other) =>
-      other
-        .WhenNotNull(  // If other is null (from the cast in the override method), then the default bool type is returned
-          @this => @this
-            .Switch(
-              (t => t.IsSuccess && other.IsSuccess, t => t.Value.Equals(other.Value)),  // if both Results are Success Results, check the Equals of the Value objects
-              (t => t.IsFailure && other.IsFailure, t => t.ErrorCode.Equals(other.ErrorCode)), // elif both Results are Failure Results are they are the same error code?
-              (t => true, t => false) // else these aren't equal
-            )
-            .Map(r => Result<bool>.Success(r))
-        )
-        .Value;  // the default value for bool type is false
+    public bool Equals(Result<T, TEnum> other)
+    {
+      if (other != null)
+      {
+        return this.Switch(
+          (t => t.IsSuccess && other.IsSuccess, t => t.Value.Equals(other.Value)),  // if both Results are Success Results, check the Equals of the Value objects
+          (t => t.IsFailure && other.IsFailure, t => t.ErrorCode.Equals(other.ErrorCode)), // elif both Results are Failure Results are they are the same error code?
+          (t => true, t => false) // else these aren't equal
+          );
+      }
+      return false;
+    }
 
     /// <summary>
     /// TODO

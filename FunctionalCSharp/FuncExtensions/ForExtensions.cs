@@ -34,6 +34,18 @@ namespace FunctionalCSharp.FuncExtensions
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="this"></param>
+    /// <param name="initializer"></param>
+    /// <param name="condition"></param>
+    /// <param name="iterator"></param>
+    /// <returns></returns>
+    public static Func<T, T> For<T>(this Func<T, T> @this,
+      int initializer, Func<int, bool> condition, Func<int, int> iterator) => For(@this)(initializer)(condition)(iterator);
+
+    /// <summary>
+    /// (initializer) => (condition) => (iterator) => (input) =>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="this"></param>
     /// <returns></returns>
     public static Func<int, Func<Func<int, bool>, Func<Func<int, int>, Func<T, Task<T>>>>> ForAsync<T>(this Func<T, Task<T>> @this) =>
       (initializer) => (condition) => (iterator) => async (input) =>
@@ -47,5 +59,17 @@ namespace FunctionalCSharp.FuncExtensions
           return input;
         }
       };
+
+    /// <summary>
+    /// (initializer) => (condition) => (iterator) => (input) =>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="this"></param>
+    /// <param name="initializer"></param>
+    /// <param name="condition"></param>
+    /// <param name="iterator"></param>
+    /// <returns></returns>
+    public static Func<T, Task<T>> ForAsync<T>(this Func<T, Task<T>> @this,
+      int initializer, Func<int, bool> condition, Func<int, int> iterator) => ForAsync(@this)(initializer)(condition)(iterator);
   }
 }

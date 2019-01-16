@@ -3,7 +3,7 @@
 namespace FunctionalCSharp.Results
 {
   /// <summary>
-  ///
+  /// a basic attempt at implementing monads in C#
   /// </summary>
   public interface IResult
   {

@@ -73,11 +73,13 @@ namespace FunctionalCSharp.ObjectExtensions
     /// <param name="this"></param>
     /// <param name="func"></param>
     /// <returns></returns>
-    public static string WhenNotNullOrEmpty(this string @this, Func<string, string> func) =>
-      @this
-        .When(
-          str => str.IsNotNullOrEmpty(),
-          func
-        );
+    public static string WhenNotNullOrEmpty(this string @this, Func<string, string> func)
+    {
+      if (@this.IsNotNullOrEmpty())
+      {
+        return func(@this);
+      }
+      return @this;
+    }
   }
 }

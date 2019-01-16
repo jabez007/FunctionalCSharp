@@ -46,7 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CurryPowder.cs" />
+    <Compile Include="FuncExtensions\CurryExtensions.cs" />
+    <Compile Include="FuncExtensions\ActionExtensions.cs" />
+    <Compile Include="FuncExtensions\CompositionExtensions.cs" />
     <Compile Include="FuncExtensions\UsingExtensions.cs" />
     <Compile Include="ObjectExtensions\IDisposableExtensions.cs" />
     <Compile Include="ObjectExtensions\ExceptionExtensions.cs" />
@@ -54,20 +56,16 @@
     <Compile Include="FuncExtensions\ForExtensions.cs" />
     <Compile Include="FuncExtensions\RetryExtensions.cs" />
     <Compile Include="FuncExtensions\WhileExtensions.cs" />
-    <Compile Include="ObjectExtensions\IEnumerableExtensions\SliceExtensions.cs" />
-    <Compile Include="ObjectExtensions\GenericExtensions.cs" />
+    <Compile Include="ObjectExtensions\ValidationExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Results\ObjectExtensions\IDisposableExtensions.cs" />
     <Compile Include="Results\FuncExtensions\FuncExtensions.cs" />
     <Compile Include="Results\IResults.cs" />
     <Compile Include="Results\IResultExtensions.cs" />
     <Compile Include="Results\Results.cs" />
-    <Compile Include="Results\TaskIResultExtensions.cs" />
-    <Compile Include="Results\ObjectExtensions\ValidationExtensions.cs" />
     <Compile Include="Results\FuncExtensions\RetryExtensions.cs" />
     <Compile Include="ObjectExtensions\StringExtensions.cs" />
     <Compile Include="ObjectExtensions\SwitchExtensions.cs" />
-    <Compile Include="ObjectExtensions\ValidationExtensions.cs" />
     <Compile Include="ObjectExtensions\XmlExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -20,18 +20,18 @@ namespace FunctionalCSharp.ObjectExtensions
         .Append(@this._GetMessageStack())
         .TrimEnd();
 
-    private static string _GetMessageStack(this Exception @this) =>
-      ""
-        .AppendFormat(
-          "\tException type: {1}{0}\tException Message: {2}{0}\tStack trace: {3}{0}",
-          Environment.NewLine, @this.GetType(), @this.Message, @this.StackTrace
-        )
-        .When(
-          m => @this.InnerException != null,
-          m => m.AppendFormat(
-            "\t---- BEGIN Inner Exception----{0}{1}\t---- END Inner Exception ----{0}",
-            Environment.NewLine, @this.InnerException._GetMessageStack()
-            )
-        );
+    private static string _GetMessageStack(this Exception @this)
+    {
+      string message = string.Format("\tException type: {1}{0}\tException Message: {2}{0}\tStack trace: {3}{0}",
+        Environment.NewLine, @this.GetType(), @this.Message, @this.StackTrace);
+
+      if (@this.InnerException != null)
+      {
+        return message + string.Format("\t---- BEGIN Inner Exception----{0}{1}\t---- END Inner Exception ----{0}",
+          Environment.NewLine, @this.InnerException._GetMessageStack());
+      }
+
+      return message;
+    }
   }
 }

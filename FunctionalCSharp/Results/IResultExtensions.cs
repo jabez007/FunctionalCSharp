@@ -4,8 +4,11 @@ using System.Threading.Tasks;
 namespace FunctionalCSharp.Results
 {
   /// <summary>
-  /// Define the varuois Bind methods here for the Result classes as extension methods on Result interfaces
+  /// Define the various Bind methods here for the Result classes as extension methods on the Result interfaces
   /// so that inheriting from Result classes isn't so difficult.
+  ///
+  /// What is a 'Bind'?
+  /// A combinator, typically called bind (as in binding a variable), that unwraps a monadic variable, then inserts it into a monadic function/expression, resulting in a new monadic value
   /// </summary>
   public static class IResultExtensions
   {

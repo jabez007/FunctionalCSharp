@@ -32,6 +32,16 @@ namespace FunctionalCSharp.FuncExtensions
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="this"></param>
+    /// <param name="condition"></param>
+    /// <returns></returns>
+    public static Func<T, T> While<T>(this Func<T, T> @this,
+      Func<T, bool> condition) => While(@this)(condition);
+
+    /// <summary>
+    /// (condition) => (input) =>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="this"></param>
     /// <returns></returns>
     public static Func<Func<T, bool>, Func<T, Task<T>>> WhileAsync<T>(this Func<T, Task<T>> @this) =>
       (condition) => async (input) =>
@@ -45,5 +55,15 @@ namespace FunctionalCSharp.FuncExtensions
           return input;
         }
       };
+
+    /// <summary>
+    /// (condition) => (input) =>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="this"></param>
+    /// <param name="condition"></param>
+    /// <returns></returns>
+    public static Func<T, Task<T>> WhileAsync<T>(this Func<T, Task<T>> @this,
+      Func<T, bool> condition) => WhileAsync(@this)(condition);
   }
 }
